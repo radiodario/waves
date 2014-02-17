@@ -141,8 +141,15 @@ var particleSystem = function() {
 system = particleSystem();
 system.updateParticles();
 
+var opacity = 0;
+
+
 function animate() {
   fade();
+
+  opacity += 0.1;
+  container.style.opacity = opacity / 100;
+
 
   w = 10 * Math.random()
 
@@ -153,7 +160,7 @@ function animate() {
   g = Math.ceil(mapR(frameCount,0, width, 0 , 255));
   b = Math.ceil(mapR(frameCount,0, width, 0 , 255));
   
-  frameCount+= 10;
+  frameCount+= 6;
 
 
   var x = calculateX();

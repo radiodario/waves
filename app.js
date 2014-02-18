@@ -33,6 +33,8 @@ var container = document.querySelector('.background');
 container.style.height = height + 'px';
 container.style.width = width + 'px';
 
+var numberContainer = document.querySelector('.container');
+
 var canvas = document.createElement('canvas');
 canvas.height = height;
 canvas.width = width;
@@ -42,8 +44,8 @@ var ctx = canvas.getContext('2d');
 
 
 canvas.addEventListener('mousemove', function(event) {
-  mouseX = event.offsetX
-  mouseY = event.offsetY
+  mouseX = mouseX - event.offsetX
+  mouseY = mouseY - event.offsetY
 });
 
 function calculateX() {
@@ -77,9 +79,9 @@ var particleSystem = function() {
 
       var r, g, b;
 
+      ctx.moveTo(particles[0][0], particles[0][1]);
+
       for (var i = 0, len = particles.length; i < len; i++) {
-        if (i == 0) {}
-          ctx.moveTo(particles[i][0], particles[i][1]);
         
         ctx.lineTo(
           particles[i][0]+mapR(Math.random(), 0, 1, -w, w), 
@@ -100,7 +102,7 @@ var particleSystem = function() {
 
       }
       // ctx.strokeStyle = '#fadfda';
-      ctx.strokeStyle = "rgba(" + 255 + ',' + 255 + ',' + 255 + ',' + 1 +" )";
+      ctx.strokeStyle = "rgba(" + 255 + ',' + 255 + ',' + 255 + ',' + 0.1 +" )";
       ctx.stroke();
 
       // ctx.closePath();
@@ -136,8 +138,9 @@ system.updateParticles();
 
 var opacity = 0;
 
-var sweep = 1;
+var sweep = 0.01;
 var increase = 0;
+
 
 
 function animate() {
@@ -146,6 +149,11 @@ function animate() {
   opacity += 0.1;
   container.style.opacity = opacity / 100;
 
+
+  if (increase > 200) sweep = sweep * -1
+  else if (increase < -200) sweep = sweep * -1
+
+  increase += sweep;
   
   
 
@@ -155,7 +163,7 @@ function animate() {
   
 
   
-  frameCount += mouseX;
+  frameCount += increase;
 
 
   var x = calculateX();

@@ -53,7 +53,7 @@ function calculateX() {
 function calculateY() {
   var angle = mapR(frameCount, 0, height, 0, 2*Math.PI);
   
-  return height/2 - (Math.cos(angle)*height/3)
+  return height/2 - (Math.sin(angle)*height/3)
 }
 
 
@@ -67,13 +67,13 @@ function fade() {
 var particleSystem = function() {
  
   var particles = [];
-  var max_particles = 10000;
+  var max_particles = 1000;
   
   return {
     drawParticles : function() {
       ctx.beginPath();
 
-      w = 10;
+      w = 2;
 
       var r, g, b;
 
@@ -81,9 +81,6 @@ var particleSystem = function() {
         if (i == 0) {}
           ctx.moveTo(particles[i][0], particles[i][1]);
         
-        
-
-
         ctx.lineTo(
           particles[i][0]+mapR(Math.random(), 0, 1, -w, w), 
           particles[i][1]+mapR(Math.random(), 0, 1, -w, w)
@@ -113,7 +110,7 @@ var particleSystem = function() {
     
     updateParticles: function() {
       if (particles.length < max_particles) {
-        this.addParticle(frameCount%width,calculateY());
+        this.addParticle(width,calculateY());
       }
       for (var i = 0; i < particles.length; i++) {
         if (particles[i][0]>= 0) {
@@ -139,6 +136,9 @@ system.updateParticles();
 
 var opacity = 0;
 
+var sweep = 1;
+var increase = 0;
+
 
 function animate() {
   fade();
@@ -152,9 +152,10 @@ function animate() {
   system.drawParticles();
   system.updateParticles();
 
- 
   
-  frameCount+= w;
+
+  
+  frameCount += mouseX;
 
 
   var x = calculateX();

@@ -4,8 +4,9 @@ var margin = 800;
 
 var ghostyUrl= 'https://dl.dropboxusercontent.com/u/5746285/ghosty.png'
 
+var noise = require('./perlin').noise;
 
-
+noise.seed(Math.random())
 
 var ghost = new Image()
 ghost.src = ghostyUrl;
@@ -36,36 +37,9 @@ container.appendChild(canvas);
 var ctx = canvas.getContext('2d');
 
 
-function drawRect(x , y) {
-  
-
-  // var rgb = 'rgba(' + r +', '+ g +', '+ b + ', 0.71)';
-  // ctx.fillStyle = rgb;
-  
-  
-  // ctx.beginPath();
-  // ctx.lineTo(x + w/2 + 0.5, y + 0.5      );
-  // ctx.lineTo(x + 0.5,       y + w   + 0.5);
-  // ctx.lineTo(x - w   + 0.5, y + w   + 0.5);
-  // ctx.lineTo(x - w/2 + 0.5, y + 0.5      );
-  // ctx.closePath();
-
-  
-  // ctx.fill();
-
-  // ctx.stroke();
-
-  ctx.drawImage(ghost, x-margin, y);
-  
-}
-
-
-
-
 canvas.addEventListener('mousemove', function(event) {
   mouseX = event.offsetX
   mouseY = event.offsetY
-
 });
 
 function calculateX() {
@@ -84,7 +58,6 @@ function fade() {
   ctx.fillRect(0, 0, width, height);
   ctx.fillStyle = "rgba(" + 0 + ',' + 0 + ',' + 0 + ',' + 0.051 +" )";
   ctx.fill();
-
 }
 
 var particleSystem = function() {
@@ -94,24 +67,43 @@ var particleSystem = function() {
   
   return {
     drawParticles : function() {
-       ctx.beginPath();
+      ctx.beginPath();
 
+      w = 10;
+
+      var r, g, b;
 
       for (var i = 0, len = particles.length; i < len; i++) {
         if (i == 0) {}
           ctx.moveTo(particles[i][0], particles[i][1]);
         
+        
+
+
         ctx.lineTo(
           particles[i][0]+mapR(Math.random(), 0, 1, -w, w), 
           particles[i][1]+mapR(Math.random(), 0, 1, -w, w)
           );
+        ctx.lineTo(
+          particles[i][0]-mapR(Math.random(), 0, 1, -w, w), 
+          particles[i][1]+mapR(Math.random(), 0, 1, -w, w)
+          );
+        ctx.lineTo(
+          particles[i][0]+mapR(Math.random(), 0, 1, -w, w), 
+          particles[i][1]-mapR(Math.random(), 0, 1, -w, w)
+          );
        
+        
+
         // drawRect(particles[i][0], particles[i][1]);
 
       }
-      // ctx.closePath();
-      ctx.strokeStyle = '#fadfda';
+      // ctx.strokeStyle = '#fadfda';
+      ctx.strokeStyle = "rgba(" + 255 + ',' + 255 + ',' + 255 + ',' + 1 +" )";
       ctx.stroke();
+
+      // ctx.closePath();
+
 
     },
     
@@ -121,7 +113,7 @@ var particleSystem = function() {
       }
       for (var i = 0; i < particles.length; i++) {
         if (particles[i][0]>= 0) {
-          particles[i][0]-= 10;
+          particles[i][0]-= w;
         } else {
           particles.splice(i, 1);
         }
@@ -150,29 +142,24 @@ function animate() {
   opacity += 0.1;
   container.style.opacity = opacity / 100;
 
-
-  w = 10 * Math.random()
+  
+  
 
   system.drawParticles();
   system.updateParticles();
 
-  r = Math.ceil(mapR(frameCount,0, width, 0 , 255));
-  g = Math.ceil(mapR(frameCount,0, width, 0 , 255));
-  b = Math.ceil(mapR(frameCount,0, width, 0 , 255));
+ 
   
-  frameCount+= 6;
+  frameCount+= w;
 
 
   var x = calculateX();
   var y = mapR(calculateY(), 100, 600, 0, height);
-  // drawRect(x, y);
- 
-  if (iterations > width)
-    iterations = 1;
-  // if (frameCount > width + margin*2) {
-  //   iterations += 1;
-  //   frameCount = iterations;
-  // }
+  
+  // r = Math.ceil(mapR(noise.perlin2(x, y),0, 1, 0 , 255));
+  // g = Math.ceil(mapR(noise.perlin2(x, y),0, 1, 0 , 255));
+  // b = Math.ceil(mapR(noise.perlin2(x, y),0, 1, 0 , 255));
+  
 
   requestAnimationFrame(animate);
 }
